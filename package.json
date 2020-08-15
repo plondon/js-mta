@@ -1,6 +1,6 @@
 {
   "name": "js-mta",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "gtfs mta parser",
   "main": "src/index.ts",
   "scripts": {
