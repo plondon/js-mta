@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const csvParse = require("csv-parse");
 
-class MTA {
+export class MTA {
   apiKey: string;
 
   constructor(apiKey: string) {

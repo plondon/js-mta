@@ -2,7 +2,7 @@
   "name": "js-mta",
   "version": "1.0.0",
   "description": "gtfs mta parser",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "rimraf ./build && tsc",
     "start:dev": "nodemon",
