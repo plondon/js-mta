@@ -3,20 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
 var csvParse = require("csv-parse");
+var dname = process.env.NODE_ENV === "dev" ? __dirname + '/./' : "node_modules/js-mta/build/";
 var MTA = /** @class */ (function () {
     function MTA(apiKey) {
         this.apiKey = apiKey;
     }
     MTA.prototype.stops = function () {
-        var stops;
-        // @ts-ignore
-        if (process.env === 'DEV') {
-            stops = fs.readFileSync(path.resolve(__dirname, "./mta-data/stops.txt"));
-        }
-        else {
-            // TODO: fix-me
-            stops = fs.readFileSync(path.resolve("node_modules/js-mta/build/mta-data/stops.txt"));
-        }
+        var stops = fs.readFileSync(path.resolve(dname, "mta-data/stops.txt"));
         return new Promise(function (resolve, reject) {
             csvParse(stops, {
                 columns: true,

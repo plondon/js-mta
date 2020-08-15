@@ -4,7 +4,7 @@
   "description": "gtfs mta parser",
   "main": "src/index.ts",
   "scripts": {
-    "build": "rimraf ./build && tsc && cp -r ./src/mta-data ./build/",
+    "build": "rimraf ./build && tsc --declaration && cp -r ./src/mta-data ./build/",
     "start:dev": "nodemon",
     "start": "npm run build && node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
