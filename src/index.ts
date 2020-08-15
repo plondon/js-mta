@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const csvParse = require("csv-parse");
 
-export class MTA {
+export default class MTA {
   apiKey: string;
 
   constructor(apiKey: string) {
@@ -31,5 +31,3 @@ export class MTA {
     });
   }
 }
-
-const mta = new MTA("123");

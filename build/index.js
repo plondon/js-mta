@@ -23,4 +23,4 @@ var MTA = /** @class */ (function () {
     };
     return MTA;
 }());
-var mta = new MTA("123");
+exports.default = MTA;
