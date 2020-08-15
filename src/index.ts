@@ -4,6 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const csvParse = require("csv-parse");
 
+const dname =
+  process.env.NODE_ENV === "dev" ? __dirname + '/./' : "node_modules/js-mta/build/";
+
 export default class MTA {
   apiKey: string;
 
@@ -12,8 +15,7 @@ export default class MTA {
   }
 
   stops(): Promise<StopsType> {
-    // @ts-ignore
-    const stops = fs.readFileSync(path.join(__dirname, "./mta-data/stops.txt"));
+    const stops = fs.readFileSync(path.resolve(dname, "mta-data/stops.txt"));
 
     return new Promise((resolve, reject) => {
       csvParse(
@@ -31,3 +33,5 @@ export default class MTA {
     });
   }
 }
+
+console.log(new MTA('123').stops())

@@ -8,8 +8,15 @@ var MTA = /** @class */ (function () {
         this.apiKey = apiKey;
     }
     MTA.prototype.stops = function () {
+        var stops;
         // @ts-ignore
-        var stops = fs.readFileSync(path.join(__dirname, "./mta-data/stops.txt"));
+        if (process.env === 'DEV') {
+            stops = fs.readFileSync(path.resolve(__dirname, "./mta-data/stops.txt"));
+        }
+        else {
+            // TODO: fix-me
+            stops = fs.readFileSync(path.resolve("node_modules/js-mta/build/mta-data/stops.txt"));
+        }
         return new Promise(function (resolve, reject) {
             csvParse(stops, {
                 columns: true,
@@ -24,3 +31,4 @@ var MTA = /** @class */ (function () {
     return MTA;
 }());
 exports.default = MTA;
+console.log(new MTA('123').stops());
