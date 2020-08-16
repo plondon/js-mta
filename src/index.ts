@@ -7,7 +7,7 @@ const csvParse = require("csv-parse");
 const dname =
   process.env.NODE_ENV === "dev"
     ? __dirname + "/mta-data/"
-    : "node_modules/js-mta/build/mta-data/";
+    : "node_modules/js-mta/dist/mta-data/";
 
 export default class MTA {
   apiKey: string;
