@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
 var csvParse = require("csv-parse");
+console.log(process.env.NODE_ENV)
 var dname = process.env.NODE_ENV === "dev" ? __dirname + '/./' : "node_modules/js-mta/build/";
 var MTA = /** @class */ (function () {
     function MTA(apiKey) {

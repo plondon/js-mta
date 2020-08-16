@@ -33,5 +33,3 @@ export default class MTA {
     });
   }
 }
-
-console.log(new MTA('123').stops())
