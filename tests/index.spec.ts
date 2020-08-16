@@ -1,6 +1,6 @@
 import MTA from "../src/index";
 
-const mta = new MTA("apiKey");
+const mta = new MTA(process.env.MTA_API_KEY || "");
 
 describe("MTA", () => {
   describe("stops()", () => {
@@ -30,6 +30,32 @@ describe("MTA", () => {
 
       expect(shapes["SI.S31R"].shape_pt_lon).toBe("-74.251961");
       expect(shapes["SI.S31R"].shape_pt_lat).toBe("40.512764");
+    });
+  });
+
+  describe("getRealTimeFeed()", () => {
+    it("fetches and parses realtime feed", async () => {
+      const rtf = await mta
+        .getRealTimeFeed(
+          "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace"
+        )
+        .then();
+
+      expect(rtf.entity).toBeDefined();
+    });
+  });
+
+  describe("getSchedule()", () => {
+    it("gets arrival times", async () => {
+      const rtf = await mta
+        .getRealTimeFeed(
+          "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace"
+        )
+        .then();
+
+      const schedule = mta.getSchedule(rtf, "H10S");
+
+      console.log(schedule);
     });
   });
 });

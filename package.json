@@ -5,23 +5,29 @@
   "main": "dist/index.js",
   "scripts": {
     "postinstall": "tsc && cp -r ./src/mta-data ./dist/",
-    "start:dev": "nodemon",
-    "test": "jest"
+    "start": "nodemon",
+    "test": "jest",
+    "test:debug": "node --inspect node_modules/.bin/jest --runInBand"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/jest": "^26.0.10",
     "@types/node": "^14.0.27",
+    "@types/request": "^2.48.5",
     "babel-jest": "^26.3.0",
+    "gtfs-types": "^1.0.1",
     "jest": "^26.4.0",
     "nodemon": "^2.0.4",
+    "request": "2.88.2",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.2.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "csv-parse": "^4.12.0"
+    "csv-parse": "^4.12.0",
+    "gtfs-realtime-bindings": "0.0.5"
   }
 }

@@ -1,14 +1,18 @@
 import {
+  GTFSRealtime,
+  TripUpdate,
   StopsType,
   TripsType,
   ObjNameType,
   FileNameType,
   ShapesType
 } from "./types";
+import request from "request";
 
 const fs = require("fs");
 const path = require("path");
 const csvParse = require("csv-parse");
+const GtfsRealtimeBindings = require("gtfs-realtime-bindings");
 
 const dname =
   process.env.NODE_ENV === "dev"
@@ -33,7 +37,7 @@ export default class MTA {
         data,
         {
           columns: true,
-          objname: objname
+          objname
         },
         (err: string, data: any) => {
           if (err) return reject(err);
@@ -55,6 +59,52 @@ export default class MTA {
   shapes(): Promise<ShapesType> {
     return this.getDataFromTxt("shape_id", "shapes.txt");
   }
-}
 
-new MTA("123").shapes().then(console.log);
+  getSchedule(GTFS: GTFSRealtime["response"], stopId: string) {
+    const obj: {[x: string]: any} = {}
+    
+    GTFS.entity.map(entity => {
+      console.log(entity)
+      if (!entity.tripUpdate) return;
+
+      // @ts-ignore
+      const stopTimeUpdates: Array<TripUpdate["stopTimeUpdate"]> =
+        entity.tripUpdate.stopTimeUpdate;
+
+      stopTimeUpdates.forEach((stu) => {
+        console.log(stu)
+        if (stu?.stopId.includes(stopId)) {
+          obj[stopId] = stu.arrival
+        }
+      })
+    });
+
+    return obj
+  }
+
+  getRealTimeFeed(url: string): Promise<GTFSRealtime["response"]> {
+    const requestSettings = {
+      headers: { "x-api-key": this.apiKey },
+      method: "GET",
+      url,
+      encoding: null
+    };
+
+    return new Promise((resolve, reject) => {
+      request(requestSettings, (error, response) => {
+        if (error) {
+          reject(error);
+        }
+
+        if (response && response.statusCode === 200) {
+          const feed: GTFSRealtime["response"] = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+            response.body
+          );
+          return resolve(feed);
+        }
+
+        reject("Invalid response code");
+      });
+    });
+  }
+}
