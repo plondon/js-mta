@@ -1,4 +1,4 @@
-import { StopsType } from "./types";
+import { StopsType, TripsType } from "./types";
 
 const fs = require("fs");
 const path = require("path");
@@ -35,7 +35,7 @@ export default class MTA {
     });
   }
 
-  trips(): Promise<any> {
+  trips(): Promise<TripsType> {
     const trips = fs.readFileSync(path.resolve(dname, "trips.txt"));
 
     return new Promise((resolve, reject) => {
