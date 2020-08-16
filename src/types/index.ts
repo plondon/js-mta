@@ -24,3 +24,16 @@ export type TripsType = {
     shape_id: string;
   };
 };
+
+export type ShapesType = {
+  [shape_id: string]: {
+    shape_id: string;
+    shape_pt_lat: string;
+    shape_pt_lon: string;
+    shape_pt_sequence: string;
+    shape_dist_traveled: string;
+  };
+};
+
+export type ObjNameType = "stop_id" | "trip_id" | "shape_id";
+export type FileNameType = "stops.txt" | "trips.txt" | "shapes.txt";

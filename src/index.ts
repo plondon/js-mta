@@ -1,4 +1,10 @@
-import { StopsType, TripsType } from "./types";
+import {
+  StopsType,
+  TripsType,
+  ObjNameType,
+  FileNameType,
+  ShapesType
+} from "./types";
 
 const fs = require("fs");
 const path = require("path");
@@ -16,15 +22,18 @@ export default class MTA {
     this.apiKey = apiKey;
   }
 
-  stops(): Promise<StopsType> {
-    const stops = fs.readFileSync(path.resolve(dname, "stops.txt"));
+  private getDataFromTxt(
+    objname: ObjNameType,
+    file: FileNameType
+  ): Promise<StopsType & TripsType & ShapesType> {
+    const data = fs.readFileSync(path.resolve(dname, file));
 
     return new Promise((resolve, reject) => {
       csvParse(
-        stops,
+        data,
         {
           columns: true,
-          objname: "stop_id"
+          objname: objname
         },
         (err: string, data: any) => {
           if (err) return reject(err);
@@ -33,26 +42,19 @@ export default class MTA {
         }
       );
     });
+  }
+
+  stops(): Promise<StopsType> {
+    return this.getDataFromTxt("stop_id", "stops.txt");
   }
 
   trips(): Promise<TripsType> {
-    const trips = fs.readFileSync(path.resolve(dname, "trips.txt"));
+    return this.getDataFromTxt("trip_id", "trips.txt");
+  }
 
-    return new Promise((resolve, reject) => {
-      csvParse(
-        trips,
-        {
-          columns: true,
-          objname: "trip_id"
-        },
-        (err: string, data: any) => {
-          if (err) return reject(err);
-
-          return resolve(data);
-        }
-      );
-    });
+  shapes(): Promise<ShapesType> {
+    return this.getDataFromTxt("shape_id", "shapes.txt");
   }
 }
 
-new MTA("123").trips().then(console.log);
+new MTA("123").shapes().then(console.log);

@@ -22,4 +22,14 @@ describe("MTA", () => {
       ).toBe("St George");
     });
   });
+
+  describe("shapes()", () => {
+    it("reads and parses shapes", async () => {
+      expect.assertions(2);
+      const shapes = await mta.shapes().then();
+
+      expect(shapes["SI.S31R"].shape_pt_lon).toBe("-74.251961");
+      expect(shapes["SI.S31R"].shape_pt_lat).toBe("40.512764");
+    });
+  });
 });
