@@ -16,11 +16,15 @@ export const enum Congestion {
   SEVERE_CONGESTION
 }
 
-declare interface Time {
+export interface Time {
   delay: number;
   time: number;
   uncertainty: number;
 }
+
+export type StopTimeEvent = {
+  time: { low: number; high: number; unsigned: boolean };
+};
 
 interface RealTimeTrip {
   tripId: string;
@@ -40,7 +44,7 @@ export interface TripUpdate {
   trip: RealTimeTrip;
   stopTimeUpdate?: {
     stopSequence: number;
-    arrival?: Time;
+    arrival?: StopTimeEvent;
     departure?: Time;
     stopId: string;
     scheduleRelationship: number;

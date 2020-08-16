@@ -1,6 +1,8 @@
+import { StopIdType } from "./stops";
+
 export type StopsType = {
-  [stop_id: string]: {
-    stop_id: string;
+  [key in StopIdType]: {
+    stop_id: StopIdType;
     stop_code: string;
     stop_name: string;
     stop_desc: string;

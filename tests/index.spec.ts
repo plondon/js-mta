@@ -8,6 +8,8 @@ describe("MTA", () => {
       expect.assertions(1);
       const stops = await mta.stops().then();
 
+      debugger
+
       expect(stops["S31S"].stop_id).toBe("S31S");
     });
   });
@@ -49,13 +51,27 @@ describe("MTA", () => {
     it("gets arrival times", async () => {
       const rtf = await mta
         .getRealTimeFeed(
-          "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace"
+          "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g"
         )
         .then();
 
-      const schedule = mta.getSchedule(rtf, "H10S");
+      const schedule = mta.getSchedule(rtf, "G35");
 
-      console.log(schedule);
+      expect(schedule[0]).toBeDefined()
+    });
+  });
+
+  describe("nextScheduledArrivalTime()", () => {
+    it("gets next arrival time", async () => {
+      const rtf = await mta
+        .getRealTimeFeed(
+          "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g"
+        )
+        .then();
+
+      const nextArrivalTime = mta.getNextScheduledArrival(rtf, 'G35')
+      console.log(nextArrivalTime)
+      expect(nextArrivalTime).toBeDefined()
     });
   });
 });

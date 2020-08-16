@@ -5,9 +5,11 @@ import {
   TripsType,
   ObjNameType,
   FileNameType,
-  ShapesType
+  ShapesType,
+  StopTimeEvent
 } from "./types";
 import request from "request";
+import { StopIdType } from "./types/stops";
 
 const fs = require("fs");
 const path = require("path");
@@ -60,11 +62,10 @@ export default class MTA {
     return this.getDataFromTxt("shape_id", "shapes.txt");
   }
 
-  getSchedule(GTFS: GTFSRealtime["response"], stopId: string) {
-    const obj: {[x: string]: any} = {}
+  getSchedule(GTFS: GTFSRealtime["response"], stopId: StopIdType) {
+    const schedule: Array<StopTimeEvent | undefined> = []
     
     GTFS.entity.map(entity => {
-      console.log(entity)
       if (!entity.tripUpdate) return;
 
       // @ts-ignore
@@ -72,14 +73,22 @@ export default class MTA {
         entity.tripUpdate.stopTimeUpdate;
 
       stopTimeUpdates.forEach((stu) => {
-        console.log(stu)
         if (stu?.stopId.includes(stopId)) {
-          obj[stopId] = stu.arrival
+          schedule.push(stu.arrival)
         }
       })
     });
 
-    return obj
+    return schedule
+  }
+
+  getNextScheduledArrival(GTFS: GTFSRealtime["response"], stopId: StopIdType) {
+    const nextScheduledArrivals = this.getSchedule(GTFS, stopId)
+    const time = nextScheduledArrivals[0]?.time.low
+    
+    if (!time) return 'No scheduled arrival time.'
+
+    return new Date(time * 1000)
   }
 
   getRealTimeFeed(url: string): Promise<GTFSRealtime["response"]> {
