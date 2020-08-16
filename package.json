@@ -4,7 +4,7 @@
   "description": "gtfs mta parser",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "rimraf ./dist && tsc && cp -r ./src/mta-data ./dist/",
+    "postinstall": "tsc && cp -r ./src/mta-data ./dist/",
     "start:dev": "nodemon",
     "test": "jest"
   },
