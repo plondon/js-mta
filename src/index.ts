@@ -6,7 +6,8 @@ import {
   ObjNameType,
   FileNameType,
   ShapesType,
-  StopTimeEvent
+  StopTimeEvent,
+  RouteType
 } from "./types";
 import request from "request";
 import { StopIdType } from "./types/stops";
@@ -29,18 +30,18 @@ export default class MTA {
   }
 
   private getDataFromTxt(
-    objname: ObjNameType,
-    file: FileNameType
+    file: FileNameType,
+    objname?: ObjNameType
   ): Promise<StopsType & TripsType & ShapesType> {
     const data = fs.readFileSync(path.resolve(dname, file));
 
     return new Promise((resolve, reject) => {
       csvParse(
         data,
-        {
+        objname ? {
           columns: true,
           objname
-        },
+        } : {},
         (err: string, data: any) => {
           if (err) return reject(err);
 
@@ -51,15 +52,24 @@ export default class MTA {
   }
 
   stops(): Promise<StopsType> {
-    return this.getDataFromTxt("stop_id", "stops.txt");
+    return this.getDataFromTxt("stops.txt", "stop_id");
   }
 
   trips(): Promise<TripsType> {
-    return this.getDataFromTxt("trip_id", "trips.txt");
+    return this.getDataFromTxt("trips.txt", "trip_id");
   }
 
   shapes(): Promise<ShapesType> {
-    return this.getDataFromTxt("shape_id", "shapes.txt");
+    return this.getDataFromTxt("shapes.txt");
+  }
+
+  getNextScheduledArrival(GTFS: GTFSRealtime["response"], stopId: StopIdType) {
+    const nextScheduledArrivals = this.getSchedule(GTFS, stopId)
+    const time = nextScheduledArrivals[0]?.time.low
+    
+    if (!time) return 'No scheduled arrival time.'
+
+    return new Date(time * 1000)
   }
 
   getSchedule(GTFS: GTFSRealtime["response"], stopId: StopIdType) {
@@ -82,13 +92,19 @@ export default class MTA {
     return schedule
   }
 
-  getNextScheduledArrival(GTFS: GTFSRealtime["response"], stopId: StopIdType) {
-    const nextScheduledArrivals = this.getSchedule(GTFS, stopId)
-    const time = nextScheduledArrivals[0]?.time.low
-    
-    if (!time) return 'No scheduled arrival time.'
+  async getStopsForRoute (route: RouteType) {
+    const allStops = await this.stops()
+    const allShapes = await this.shapes()
+    const shapesForRoute = allShapes.filter((val) => val[0].split('..')[0] === route)
+    const latlngs = shapesForRoute.map((val) => [val[1], val[2]])
+    const stops = Object.keys(allStops).filter((stopId) => {
+      const latMatch = latlngs.some((val) => val[0] === allStops[stopId as StopIdType].stop_lat)
+      const lngMatch = latlngs.some((val) => val[1] === allStops[stopId as StopIdType].stop_lon)
 
-    return new Date(time * 1000)
+      return latMatch && lngMatch
+    })
+    
+    return stops
   }
 
   getRealTimeFeed(url: string): Promise<GTFSRealtime["response"]> {

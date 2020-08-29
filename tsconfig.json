@@ -7,14 +7,17 @@
     ],
     "allowJs": true,
     "declaration": true,
+    "downlevelIteration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "outDir": "dist",
     "resolveJsonModule": true,
     "rootDir": "src",
     "skipLibCheck": true,
     "strict": true,
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*"

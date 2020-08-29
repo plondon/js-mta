@@ -1,4 +1,7 @@
 import MTA from "../src/index";
+import { getDataFeedUrlFromRoute } from "../src/model";
+import { RouteType } from "../src/types";
+import { StopIdType } from "../src/types/stops";
 
 const mta = new MTA(process.env.MTA_API_KEY || "");
 
@@ -7,8 +10,6 @@ describe("MTA", () => {
     it("reads and parses stops", async () => {
       expect.assertions(1);
       const stops = await mta.stops().then();
-
-      debugger
 
       expect(stops["S31S"].stop_id).toBe("S31S");
     });
@@ -30,8 +31,8 @@ describe("MTA", () => {
       expect.assertions(2);
       const shapes = await mta.shapes().then();
 
-      expect(shapes["SI.S31R"].shape_pt_lon).toBe("-74.251961");
-      expect(shapes["SI.S31R"].shape_pt_lat).toBe("40.512764");
+      expect(shapes[100][1]).toEqual("40.729283");
+      expect(shapes[200][2]).toEqual("-73.967929");
     });
   });
 
@@ -57,7 +58,7 @@ describe("MTA", () => {
 
       const schedule = mta.getSchedule(rtf, "G35");
 
-      expect(schedule[0]).toBeDefined()
+      expect(schedule[0]).toBeDefined();
     });
   });
 
@@ -69,9 +70,39 @@ describe("MTA", () => {
         )
         .then();
 
-      const nextArrivalTime = mta.getNextScheduledArrival(rtf, 'G35')
-      console.log(nextArrivalTime)
-      expect(nextArrivalTime).toBeDefined()
+      const nextArrivalTime = mta.getNextScheduledArrival(rtf, "G35");
+      expect(nextArrivalTime).toBeDefined();
+    });
+  });
+
+  describe("getStopsForRoute()", () => {
+    it("gets all stop_id's for a route", async () => {
+      const route = "A";
+      const stops = await mta.getStopsForRoute(route);
+
+      expect(stops.length).toBe(177);
+    });
+  });
+
+  describe("getDataFeedUrlFromRoute()", () => {
+    it("gets data feed url for route", async () => {
+      const route = "1";
+      const url = getDataFeedUrlFromRoute(route);
+
+      const stops = await mta.stops()
+      const rtf = await mta.getRealTimeFeed(url);
+      const stopsForRoute = await mta.getStopsForRoute(route);
+
+      const times = stopsForRoute.map((stopId) => {
+        const nextArrivalTime = mta.getNextScheduledArrival(rtf, stopId as StopIdType);
+        return [stops[stopId as StopIdType].stop_name, new Date(nextArrivalTime).toString()];
+      });
+
+      console.log(times);
+
+      expect(url).toBe(
+        "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs"
+      );
     });
   });
 });

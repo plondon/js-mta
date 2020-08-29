@@ -1,5 +1,34 @@
 import { StopIdType } from "./stops";
 
+export type RouteType =
+  | "1"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "A"
+  | "B"
+  | "C"
+  | "D"
+  | "E"
+  | "F"
+  | "G"
+  | "J"
+  | "L"
+  | "M"
+  | "N"
+  | "Q"
+  | "R"
+  | "W"
+  | "Z"
+  | "SIR";
+
+type ShapeLat = string;
+type ShapeLng = string;
+export type ShapesType = Array<[string, ShapeLat, ShapeLng, string, ""]>;
+
 export type StopsType = {
   [key in StopIdType]: {
     stop_id: StopIdType;
@@ -12,28 +41,18 @@ export type StopsType = {
     stop_url: string;
     location_type: string;
     parent_station: string;
-  };
+  }
 };
 
 export type TripsType = {
   [trip_id: string]: {
-    route_id: string;
+    route_id: RouteType;
     service_id: string;
     trip_id: string;
     trip_headsign: string;
     direction_id: string;
     block_id: string;
     shape_id: string;
-  };
-};
-
-export type ShapesType = {
-  [shape_id: string]: {
-    shape_id: string;
-    shape_pt_lat: string;
-    shape_pt_lon: string;
-    shape_pt_sequence: string;
-    shape_dist_traveled: string;
   };
 };
 
